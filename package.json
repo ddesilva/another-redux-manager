@@ -1,7 +1,7 @@
 {
   "name": "another-redux-helper",
   "version": "1.0.0",
-  "description": "Another attempt to reduce boilerplate for async actions.",
+  "description": "an attempt to reduce boilerplate for async actions.",
   "main": "./dist/index.js",
   "directories": {
     "example": "examples"
