@@ -1,2 +1,2 @@
-# another-redux-helper
-Another attempt to reduce boilerplate for async actions.
+# react-event-bus
+Cross component comms using a pub/sub pattern

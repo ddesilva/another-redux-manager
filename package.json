@@ -1,0 +1,57 @@
+{
+  "name": "another-redux-helper",
+  "version": "1.0.0",
+  "description": "Another attempt to reduce boilerplate for async actions.",
+  "main": "./dist/index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "build": "babel ./src --out-dir ./dist --copy-files",
+    "test": "mocha --inspect=0.0.0.0:6001 --opts ./mocha.opts",
+    "clean": "rm -rf ./dist",
+    "lint": "eslint ./src",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ddesilva/react-event-bus.git"
+  },
+  "keywords": [
+    "react",
+    "context",
+    "eventbus"
+  ],
+  "author": "Dilshan de Silva",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ddesilva/another-redux-helper/issues"
+  },
+  "homepage": "https://github.com/ddesilva/another-redux-helper#readme",
+  "peerDependencies": {
+    "react": "16.x",
+    "react-dom": "16.x",
+    "prop-types": "15.x"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.x",
+    "@babel/core": "^7.2.x",
+    "@babel/plugin-proposal-object-rest-spread": "^7.2.x",
+    "@babel/plugin-transform-classes": "^7.2.x",
+    "@babel/plugin-transform-react-jsx": "^7.2.x",
+    "@babel/plugin-transform-runtime": "^7.2.x",
+    "@babel/preset-env": "^7.2.x",
+    "@babel/register": "^7.0.0",
+    "babel-eslint": "^10.0.x",
+    "chai": "^4.2.0",
+    "eslint": "^5.12.x",
+    "eslint-config-prettier": "^3.6.x",
+    "eslint-plugin-prettier": "^3.0.x",
+    "eslint-plugin-react": "^7.12.x",
+    "mocha": "^5.2.0",
+    "prettier": "^1.15.x",
+    "prop-types": "15.x",
+    "react": "16.x",
+    "react-dom": "16.x"
+  }
+}
