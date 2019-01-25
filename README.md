@@ -13,8 +13,8 @@ makeAsyncActionCreators method
 ```
 export const actions = makeAsyncActionCreators('GET_PRODUCT', 'payload');
 
-console.log(actions.inProgress({payload: 'test'}));
-// { type: 'GET_PRODUCT_FETCH_IN_PROGRESS', payload: 'test' }
+console.log(actions.inProgress());
+// { type: 'GET_PRODUCT_FETCH_IN_PROGRESS'}
 
 console.log(actions.inSuccess({payload: 'test'});
 // { type: 'GET_PRODUCT_FETCH_SUCCESS', payload: 'test' }
