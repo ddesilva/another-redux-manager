@@ -1,5 +1,5 @@
 # Another Redux Helper
-An attempt to reduce boilerplate for async actions.
+An attempt to redux boilerplate for redux whilst still keeping quite granular control over actions and reducers.
 
 Install
 ```
@@ -113,4 +113,10 @@ function productReducer(state = INITIAL_STATE, action) {
 ```
 
 
+You can also create a single action creator
+```
+import { makeActionCreator } from 'another-redux-helper';
+
+const inProgress = makeActionCreator('GET_PRODUCT_IN_PROGRESS', 'payload');
+```
 
