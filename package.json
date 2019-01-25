@@ -1,6 +1,6 @@
 {
   "name": "another-redux-helper",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "an attempt to reduce boilerplate for async actions.",
   "main": "./dist/index.js",
   "directories": {
