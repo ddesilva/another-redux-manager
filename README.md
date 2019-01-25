@@ -17,7 +17,7 @@ console.log(actions.inProgress({payload: 'test'}));
 // { type: 'GET_PRODUCT_FETCH_IN_PROGRESS', payload: 'test' }
 
 console.log(actions.inSuccess({payload: 'test'});
-// { type: 'GET_PRODUCT_FETCH_SUCESS', payload: 'test' }
+// { type: 'GET_PRODUCT_FETCH_SUCCESS', payload: 'test' }
 
 etc...
 
@@ -69,16 +69,32 @@ const INITIAL_STATE = {
 
 function productReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    // GET CART
+    case actions.actionTypes.initial:
+        return {
+          ...state,
+          ...{
+            results: {},
+            fetchError: {},
+            fetchStatus: actions.actionTypes.initial
+          }
+        };
+    case actions.actionTypes.inProgress:
+        return {
+          ...state,
+          ...{
+            results: {},
+            fetchError: {},
+            fetchStatus: actions.actionTypes.inProgress
+          }
+        };
     case actions.actionTypes.success:
       return {
         ...state,
-        ...{ results: action.payload, fetchStatus: actions.actionTypes.success }
-      };
-    case actions.actionTypes.inProgress:
-      return {
-        ...state,
-        ...{ results: {}, fetchStatus: actions.actionTypes.inProgress }
+        ...{
+          results: action.payload,
+          fetchError: {},
+          fetchStatus: actions.actionTypes.success
+        }
       };
     case actions.actionTypes.failure:
       return {
