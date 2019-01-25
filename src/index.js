@@ -1,8 +1,8 @@
 const OPTIONS_LIST = [
-    { actionName: 'initial', actionTypePostFix: 'FETCH_INITIAL' },
-    { actionName: 'inProgress', actionTypePostFix: 'FETCH_IN_PROGRESS' },
-    { actionName: 'success', actionTypePostFix: 'FETCH_SUCCESS' },
-    { actionName: 'failure', actionTypePostFix: 'FETCH_FAILED' }
+  { actionName: 'initial', actionTypePostFix: 'FETCH_INITIAL' },
+  { actionName: 'inProgress', actionTypePostFix: 'FETCH_IN_PROGRESS' },
+  { actionName: 'success', actionTypePostFix: 'FETCH_SUCCESS' },
+  { actionName: 'failure', actionTypePostFix: 'FETCH_FAILED' }
 ];
 
 /*
@@ -17,32 +17,35 @@ const OPTIONS_LIST = [
 */
 
 const makeAsyncActionCreators = (type, ...argNames) =>
-    OPTIONS_LIST.reduce(
-        (acc, option) => {
-            acc.actionTypeKeys[`${type}_${option.actionTypePostFix}`] = `${type}_${
-                option.actionTypePostFix
-                }`;
+  OPTIONS_LIST.reduce(
+    (acc, option) => {
+      acc.actionTypeKeys[`${type}_${option.actionTypePostFix}`] = `${type}_${
+        option.actionTypePostFix
+      }`;
 
-            acc.actionTypes[option.actionName] = type + '_' + option.actionTypePostFix;
+      acc.actionTypes[option.actionName] = type + '_' + option.actionTypePostFix;
 
-            acc[option.actionName] = (...args) =>
-                argNames.reduce(
-                    (acc2, argName, index) => {
-                        if (args[index]) {
-                            acc2[argNames[index]] = args[index];
-                        }
-                        return acc2;
-                    },
-                    { type: `${type}_${option.actionTypePostFix}` }
-                );
+      acc[option.actionName] = (...args) =>
+        argNames.reduce(
+          (acc2, argName, index) => {
+            if (args[index]) {
+              acc2[argNames[index]] = args[index];
+            }
+            return acc2;
+          },
+          { type: `${type}_${option.actionTypePostFix}` }
+        );
 
-            return acc;
-        },
-        {
-            actionTypes: {},
-            actionTypeKeys: {}
-        }
-    );
+      acc.type = type;
+
+      return acc;
+    },
+    {
+      actionTypes: {},
+      actionTypeKeys: {},
+      type: ''
+    }
+  );
 
 /*
   Essentially returns and action creator
@@ -53,14 +56,13 @@ const makeAsyncActionCreators = (type, ...argNames) =>
 */
 
 const makeActionCreator = (type, ...argNames) => {
-    return function(...args) {
-        const action = { type };
-        argNames.forEach((arg, index) => {
-            action[argNames[index]] = args[index];
-        });
-        return action;
-    };
+  return function(...args) {
+    const action = { type };
+    argNames.forEach((arg, index) => {
+      action[argNames[index]] = args[index];
+    });
+    return action;
+  };
 };
 
 export { makeActionCreator, makeAsyncActionCreators };
-

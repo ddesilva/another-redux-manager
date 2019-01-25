@@ -1,5 +1,5 @@
 # Another Redux Helper
-An attempt to redux boilerplate for redux whilst still keeping quite granular control over actions and reducers.
+An attempt to reducee boilerplate for redux whilst still keeping granular control over actions and reducers.
 
 Install
 ```
