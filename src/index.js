@@ -16,14 +16,14 @@ const OPTIONS_LIST = [
   const { CONTENT_FETCH_INITIAL, CONTENT_FETCH_SUCCESS, CONTENT_FETCH_IN_PROGRESS, CONTENT_FETCH_FAILED } = contentActionHelper.actionTypeKeys; // plain action types
 */
 
-const makeAsyncActionCreators = (type, ...argNames) =>
+const createReduxManager = (name, ...argNames) =>
   OPTIONS_LIST.reduce(
     (acc, option) => {
-      acc.actionTypeKeys[`${type}_${option.actionTypePostFix}`] = `${type}_${
+      acc.actionTypeKeys[`${name}_${option.actionTypePostFix}`] = `${name}_${
         option.actionTypePostFix
       }`;
 
-      acc.actionTypes[option.actionName] = type + '_' + option.actionTypePostFix;
+      acc.actionTypes[option.actionName] = name + '_' + option.actionTypePostFix;
 
       acc[option.actionName] = (...args) =>
         argNames.reduce(
@@ -33,17 +33,76 @@ const makeAsyncActionCreators = (type, ...argNames) =>
             }
             return acc2;
           },
-          { type: `${type}_${option.actionTypePostFix}` }
+          { type: `${name}_${option.actionTypePostFix}` }
         );
 
-      acc.type = type;
+      acc.name = name;
+
+      acc.reducerMethods = {
+        initial: (state, action, initialData) => {
+          return {
+            ...state,
+            ...{
+              [acc.name]: {
+                ...{
+                  data: initialData,
+                  status: acc.actionTypes.initial,
+                  error: {}
+                }
+              }
+            }
+          };
+        },
+        success: (state, action) => {
+          return {
+            ...state,
+            ...{
+              [acc.name]: {
+                ...{
+                  data: action.payload,
+                  status: acc.actionTypes.success,
+                  error: {}
+                }
+              }
+            }
+          };
+        },
+        inProgress: (state, action, initialData) => {
+          return {
+            ...state,
+            ...{
+              [acc.name]: {
+                ...{
+                  data: initialData,
+                  status: acc.actionTypes.inProgress,
+                  error: {}
+                }
+              }
+            }
+          };
+        },
+        failure: (state, action, initialData) => {
+          return {
+            ...state,
+            ...{
+              [acc.name]: {
+                ...{
+                  data: initialData,
+                  status: acc.actionTypes.failure,
+                  error: action.payload
+                }
+              }
+            }
+          };
+        }
+      };
 
       return acc;
     },
     {
       actionTypes: {},
       actionTypeKeys: {},
-      type: ''
+      name: ''
     }
   );
 
@@ -65,4 +124,4 @@ const makeActionCreator = (type, ...argNames) => {
   };
 };
 
-export { makeActionCreator, makeAsyncActionCreators };
+export { makeActionCreator, createReduxManager };

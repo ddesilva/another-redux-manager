@@ -1,9 +1,16 @@
-# Another Redux Helper
-An attempt to reducee boilerplate for redux whilst still keeping granular control over actions and reducers.
+# Another Redux Manager
+Yes yet another attempt to reduce boilerplate for redux whilst still keeping granular control over actions and reducers.
+
+## Why
+- Reducers boilerplate
+- No overblown middleware required
+- Less opinionated to plays nice with existing codebase
+- More control over shape of your store and reducers
+
 
 Install
 ```
-$ npm i another-redux-helper
+$ npm i another-redux-manager
 ```
 
 ## Getting Started

@@ -1,7 +1,7 @@
 {
-  "name": "another-redux-helper",
-  "version": "1.0.2",
-  "description": "an attempt to reduce boilerplate for async actions.",
+  "name": "another-redux-manager",
+  "version": "1.0.3",
+  "description": "Yet another attempt to reduce boilerplate for async actions and reducers.",
   "main": "./dist/index.js",
   "directories": {
     "example": "examples"
@@ -9,13 +9,14 @@
   "scripts": {
     "build": "babel ./src --out-dir ./dist --copy-files",
     "test": "mocha --inspect=0.0.0.0:6001 --opts ./mocha.opts",
+    "test:watch": "mocha --inspect=0.0.0.0:6001 --watch --opts ./mocha.opts",
     "clean": "rm -rf ./dist",
     "lint": "eslint ./src",
     "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ddesilva/another-redux-helper.git"
+    "url": "git+https://github.com/ddesilva/another-redux-manager.git"
   },
   "keywords": [
     "react",
@@ -25,9 +26,9 @@
   "author": "Dilshan de Silva",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ddesilva/another-redux-helper/issues"
+    "url": "https://github.com/ddesilva/another-redux-manager/issues"
   },
-  "homepage": "https://github.com/ddesilva/another-redux-helper#readme",
+  "homepage": "https://github.com/ddesilva/another-redux-manager#readme",
   "peerDependencies": {
     "react": "16.x",
     "react-dom": "16.x",
@@ -42,6 +43,7 @@
     "@babel/plugin-transform-runtime": "^7.2.x",
     "@babel/preset-env": "^7.2.x",
     "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.3.1",
     "babel-eslint": "^10.0.x",
     "chai": "^4.2.0",
     "eslint": "^5.12.x",
