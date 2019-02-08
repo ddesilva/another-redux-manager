@@ -9,7 +9,7 @@
   "scripts": {
     "build": "babel ./src --out-dir ./dist --copy-files",
     "test": "mocha --inspect=0.0.0.0:6001 --opts ./mocha.opts",
-    "test:watch": "mocha --inspect=0.0.0.0:6001 --watch --opts ./mocha.opts",
+    "test:watch": "mocha --inspect=0.0.0.0:6002 --watch --opts ./mocha.opts",
     "clean": "rm -rf ./dist",
     "lint": "eslint ./src",
     "prepare": "npm run build"

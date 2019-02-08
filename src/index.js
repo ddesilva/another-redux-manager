@@ -1,3 +1,5 @@
+import { makeReducerMethods } from './defaultReducerMethods';
+
 const OPTIONS_LIST = [
   { actionName: 'initial', actionTypePostFix: 'FETCH_INITIAL' },
   { actionName: 'inProgress', actionTypePostFix: 'FETCH_IN_PROGRESS' },
@@ -9,14 +11,23 @@ const OPTIONS_LIST = [
   Exports dynamically generated actions and action creators for use in async data fetching. This cuts down the boilerplate code required.
 
   Usage:
-  const contentActionHelper = makeAsyncActionCreators('CONTENT', 'payload');
+  const contentReduxManager = createReduxManager({name: 'CONTENT', resultsPropsName: 'results' }, 'payload');
 
   Exports the following:
-  const { initial, success, failure, inProgress } = contentActionHelper; // actionCreators
-  const { CONTENT_FETCH_INITIAL, CONTENT_FETCH_SUCCESS, CONTENT_FETCH_IN_PROGRESS, CONTENT_FETCH_FAILED } = contentActionHelper.actionTypeKeys; // plain action types
+  const { initial, inProgress, success, failure} = contentReduxManager; // actionCreators
+  const { CONTENT_FETCH_INITIAL, CONTENT_FETCH_IN_PROGRESS, CONTENT_FETCH_SUCCESS, CONTENT_FETCH_FAILED } = contentReduxManager.actionTypeKeys; // plain action types
+  const { initial, inProgress, success, failure} = reducerMethods; // reducer methods
+
 */
 
-const createReduxManager = (name, ...argNames) =>
+const DEFAULT_RESULTS_PROP_NAME = 'results';
+
+const createReduxManager = ({
+  name,
+  resultsPropName = DEFAULT_RESULTS_PROP_NAME,
+  reducerMethods = makeReducerMethods,
+  argNames = ['payload']
+}) =>
   OPTIONS_LIST.reduce(
     (acc, option) => {
       acc.actionTypeKeys[`${name}_${option.actionTypePostFix}`] = `${name}_${
@@ -37,65 +48,7 @@ const createReduxManager = (name, ...argNames) =>
         );
 
       acc.name = name;
-
-      acc.reducerMethods = {
-        initial: (state, action, initialData) => {
-          return {
-            ...state,
-            ...{
-              [acc.name]: {
-                ...{
-                  data: initialData,
-                  status: acc.actionTypes.initial,
-                  error: {}
-                }
-              }
-            }
-          };
-        },
-        success: (state, action) => {
-          return {
-            ...state,
-            ...{
-              [acc.name]: {
-                ...{
-                  data: action.payload,
-                  status: acc.actionTypes.success,
-                  error: {}
-                }
-              }
-            }
-          };
-        },
-        inProgress: (state, action, initialData) => {
-          return {
-            ...state,
-            ...{
-              [acc.name]: {
-                ...{
-                  data: initialData,
-                  status: acc.actionTypes.inProgress,
-                  error: {}
-                }
-              }
-            }
-          };
-        },
-        failure: (state, action, initialData) => {
-          return {
-            ...state,
-            ...{
-              [acc.name]: {
-                ...{
-                  data: initialData,
-                  status: acc.actionTypes.failure,
-                  error: action.payload
-                }
-              }
-            }
-          };
-        }
-      };
+      acc.reducerMethods = reducerMethods(acc, resultsPropName);
 
       return acc;
     },
