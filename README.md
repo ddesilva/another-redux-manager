@@ -127,13 +127,13 @@ const INITIAL_STATE = {
 
 function contentReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case actions.actionTypes.initial:
+    case getContentManager.actionTypes.initial:
         return getContentManager.reducerMethods.initial(state, action, INITIAL_STATE[getContentManager.name].results);
-    case actions.actionTypes.inProgress:
+    case getContentManager.actionTypes.inProgress:
         return getContentManager.reducerMethods.inProgress(state, action, INITIAL_STATE[getContentManager.name].results);
-    case actions.actionTypes.success:
+    case getContentManager.actionTypes.success:
       return getContentManager.reducerMethods.success(state, action, INITIAL_STATE[getContentManager.name].results);
-    case actions.actionTypes.failure:
+    case getContentManager.actionTypes.failure:
       return getContentManager.reducerMethods.failure(state, action, INITIAL_STATE[getContentManager.name].results);
     default:
       return state;
