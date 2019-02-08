@@ -85,7 +85,7 @@ Properties:
 
 | prop | desc  |
 |---|---|
-| name  | unique prefix for actions and reducers  |
+| name  | unique prefix for actions and reducers (RECOMMENDED: all uppercase and separated by underscore to match async postfixes)  |
 | argNames  | array of argument names for actions (OPTIONAL: defaults to \['payload'\])  |
 | resultsPropsName  | name of property in the reducer to place fetched data (OPTIONAL: defaults to \['results'\]) |
 | reducerMethods  | function that allows customising of shape of reducer (OPTIONAL: see advanced usage) |
@@ -118,8 +118,8 @@ export function getContent() {
 
 // example reducer
 const INITIAL_STATE = {
-  [getCartReduxManager.name]: {
-      status: getCartReduxManager.actionTypes.initial,
+  [getContentManager.name]: {
+      status: getContentManager.actionTypes.initial,
       error: {}
       results: {}
     },
@@ -128,13 +128,13 @@ const INITIAL_STATE = {
 function contentReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case actions.actionTypes.initial:
-        return getCartReduxManager.reducerMethods.initial(state, action, INITIAL_STATE[getCartReduxManager.name].results);
+        return getContentManager.reducerMethods.initial(state, action, INITIAL_STATE[getContentManager.name].results);
     case actions.actionTypes.inProgress:
-        return getCartReduxManager.reducerMethods.inProgress(state, action, INITIAL_STATE[getCartReduxManager.name].results);
+        return getContentManager.reducerMethods.inProgress(state, action, INITIAL_STATE[getContentManager.name].results);
     case actions.actionTypes.success:
-      return getCartReduxManager.reducerMethods.success(state, action, INITIAL_STATE[getCartReduxManager.name].results);
+      return getContentManager.reducerMethods.success(state, action, INITIAL_STATE[getContentManager.name].results);
     case actions.actionTypes.failure:
-      return getCartReduxManager.reducerMethods.failure(state, action, INITIAL_STATE[getCartReduxManager.name].results);
+      return getContentManager.reducerMethods.failure(state, action, INITIAL_STATE[getContentManager.name].results);
     default:
       return state;
   }
@@ -145,8 +145,131 @@ function contentReducer(state = INITIAL_STATE, action) {
 
 You can also create a single action creator
 ```
-import { makeActionCreator } from 'another-redux-helper';
+import { makeActionCreator } from 'another-redux-manager';
 
-const inProgress = makeActionCreator('GET_PRODUCT_IN_PROGRESS', 'payload');
+const inProgress = makeActionCreator('GET_CONTENT_IN_PROGRESS', 'payload');
 ```
 
+
+## Advanced Usage
+
+by default the shape of each reducer method is:
+```
+const makeReducerMethods = (acc, resultsPropName) => {
+  return {
+    initial: (state, action, initialData) => {
+      return {
+        ...state,
+        ...{
+          [acc.name]: {
+            ...{
+              [resultsPropName]: initialData,
+              status: acc.actionTypes.initial,
+              error: {}
+            }
+          }
+        }
+      };
+    },
+    success: (state, action) => {
+      return {
+        ...state,
+        ...{
+          [acc.name]: {
+            ...{
+              [resultsPropName]: action.payload,
+              status: acc.actionTypes.success,
+              error: {}
+            }
+          }
+        }
+      };
+    },
+    inProgress: (state, action, initialData) => {
+      return {
+        ...state,
+        ...{
+          [acc.name]: {
+            ...{
+              [resultsPropName]: initialData,
+              status: acc.actionTypes.inProgress,
+              error: {}
+            }
+          }
+        }
+      };
+    },
+    failure: (state, action, initialData) => {
+      return {
+        ...state,
+        ...{
+          [acc.name]: {
+            ...{
+              [resultsPropName]: initialData,
+              status: acc.actionTypes.failure,
+              error: action.payload
+            }
+          }
+        }
+      };
+    }
+  };
+};
+
+export { makeReducerMethods };
+
+```
+
+
+However if you require custom shape for your state you can pass your own in as a property to the createReduxManager method
+
+```
+
+const makeReducerMethods = (reduxManager, resultsPropName) => {
+  return {
+    success: (state, action) => {
+      return {
+        ...state,
+        ...{
+          [resultsPropName]: action.payload,
+          [reduxManager.name]: {
+            status: reduxManager.actionTypes.success,
+            error: {}
+          }
+        }
+      };
+    },
+    inProgress: (state, action, initial) => {
+      return {
+        ...state,
+        ...{
+          [resultsPropName]: initial,
+          [reduxManager.name]: {
+            status: reduxManager.actionTypes.inProgress,
+            error: {}
+          }
+        }
+      };
+    },
+    failure: (state, action, initial) => {
+      return {
+        ...state,
+        ...{
+          [resultsPropName]: initial,
+          [reduxManager.name]: {
+            status: reduxManager.actionTypes.failure,
+            error: action.payload
+          }
+        }
+      };
+    }
+  };
+};
+
+
+export const getContentReduxManager = createReduxManager({
+  name: 'GET_CONTENT',
+  reducerMethods: makeReducerMethods
+});
+
+```
