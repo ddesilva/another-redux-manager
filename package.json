@@ -1,6 +1,6 @@
 {
   "name": "another-redux-manager",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Yet another attempt to reduce boilerplate for async actions and reducers.",
   "main": "./dist/index.js",
   "directories": {
