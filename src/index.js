@@ -36,7 +36,8 @@ const createReduxManager = ({
 
       acc.actionTypes[option.actionName] = name + '_' + option.actionTypePostFix;
 
-      acc[option.actionName] = (...args) =>
+      acc.actions = {};
+      acc.actions[option.actionName] = (...args) =>
         argNames.reduce(
           (acc2, argName, index) => {
             if (args[index]) {
@@ -46,6 +47,9 @@ const createReduxManager = ({
           },
           { type: `${name}_${option.actionTypePostFix}` }
         );
+
+      // Short hand for easier reading when composition actions.
+      acc[option.actionName] = acc.actions[option.actionName];
 
       acc.name = name;
       acc.reducerMethods = reducerMethods(acc, resultsPropName);
