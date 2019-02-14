@@ -59,41 +59,56 @@ describe('Generate Reducers', () => {
       argNames: ['payload']
     });
 
-    it('should return the initial reducer method', () => {
-      const INITIAL_STATE = {};
-      const payload = 'test';
+    it('should return the initial reducer method which resets the state', () => {
+      const INITIAL_STATE = {
+        [contentReduxManager.name]: {
+          results: {
+            key1: 'value1'
+          }
+        }
+      };
       const reducerMethod = contentReduxManager.reducerMethods.initial;
-      const action = contentReduxManager.initial(payload);
-      const result = reducerMethod(INITIAL_STATE, action, {});
+      const result = reducerMethod(INITIAL_STATE, INITIAL_STATE[contentReduxManager.name].results);
+
       expect(result).to.deep.equal({
         [contentReduxManager.name]: {
-          results: {},
+          results: {
+            key1: 'value1'
+          },
           error: {},
           status: contentReduxManager.actionTypes.initial
         }
       });
     });
 
-    it('should return the success reducer method', () => {
-      const INITIAL_STATE = {};
-      const payload = 'test';
+    it('should return the success reducer method which merges the response payload with the state.', () => {
+      const INITIAL_STATE = {
+        [contentReduxManager.name]: {
+          results: {
+            key1: 'value1'
+          }
+        }
+      };
+      const payload = {
+        key2: 'value2'
+      };
       const reducerMethod = contentReduxManager.reducerMethods.success;
       const action = contentReduxManager.success(payload);
       const result = reducerMethod(INITIAL_STATE, action, {});
+
       expect(result).to.deep.equal({
         [contentReduxManager.name]: {
-          results: payload,
+          results: { key1: 'value1', key2: 'value2' },
           error: {},
           status: contentReduxManager.actionTypes.success
         }
       });
     });
 
-    it('should return the inProgress reducer method', () => {
-      const INITIAL_STATE = {};
-      const payload = 'test';
+    it('should return the inProgress reducer method which sets the inProgress state only', () => {
+      const INITIAL_STATE = contentReduxManager.reducerMethods.initial({}, {});
       const reducerMethod = contentReduxManager.reducerMethods.inProgress;
-      const action = contentReduxManager.inProgress(payload);
+      const action = contentReduxManager.inProgress();
       const result = reducerMethod(INITIAL_STATE, action, {});
       expect(result).to.deep.equal({
         [contentReduxManager.name]: {
@@ -104,12 +119,13 @@ describe('Generate Reducers', () => {
       });
     });
 
-    it('should return the failure reducer method', () => {
-      const INITIAL_STATE = {};
+    it('should return the failure reducer method which sets the error state only', () => {
+      const INITIAL_STATE = contentReduxManager.reducerMethods.initial({}, {});
       const payload = 'test';
       const reducerMethod = contentReduxManager.reducerMethods.failure;
       const action = contentReduxManager.failure(payload);
       const result = reducerMethod(INITIAL_STATE, action, {});
+
       expect(result).to.deep.equal({
         [contentReduxManager.name]: {
           results: {},
