@@ -10,18 +10,18 @@ Yes yet another attempt to reduce boilerplate for redux whilst still keeping gra
 
 
 Install
-```
+```js
 $ npm i another-redux-manager
 ```
 
 ## Getting Started
 
-```
+```js
 const contentReduxManager = createReduxManager({name: 'CONTENT'});
 ```
 
 returns the following object:
-```
+```js
 {
   name:'CONTENT',
   actionTypes:{
@@ -56,7 +56,7 @@ returns the following object:
 ```
 
 Access ActionCreators
-```
+```js
 const { initial, inProgress, success, failure} = contentReduxManager.actions;
 
 or also available as shorthand references:
@@ -65,18 +65,18 @@ const { initial, inProgress, success, failure} = contentReduxManager;
 ```
 
 Access Action types
-```
+```js
 const { initial, inProgress, success, failure } = contentReduxManager.actionTypes;
 const { CONTENT_FETCH_INITIAL, CONTENT_FETCH_IN_PROGRESS, CONTENT_FETCH_SUCCESS, CONTENT_FETCH_FAILED } = contentReduxManager.actionTypeKeys; // plain action types
 ```
 
 Access Reducer Methods (for use in your switch statement in your reducer)
-```
+```js
 const { initial, inProgress, success, failure} = contentReduxManager.reducerMethods; // reducer methods
 ```
 
 You can also define multiple arguments to your actions (if you need to)
-```
+```js
 const contentReduxManager = createReduxManager({name: 'CONTENT', resultsPropsName: 'results' }, 'payload', 'anotherProp');
 
 console.log(actions.inProgress({payload: 'test', anotherProp: 'test' }));
@@ -87,7 +87,7 @@ console.log(actions.inProgress({payload: 'test', anotherProp: 'test' }));
 
 ## Usage
 
-```
+```js
 const contentReduxManager = createReduxManager({name: 'CONTENT', argNames: ['payload'], resultsPropsName: 'results', reducerMethods: () => {} });
 ```
 
@@ -104,7 +104,7 @@ Properties:
 
 ## Example
 
-```
+```js
 
 import { createReduxManager } from 'another-redux-manager';
 
@@ -159,7 +159,7 @@ function contentReducer(state = INITIAL_STATE, action) {
 ## Advanced Usage
 
 by default the shape of each reducer method looks something like:
-```
+```js
 const makeReducerMethods = (acc, resultsPropName) => {
   return {
     initial: (state, initialData) => {
@@ -228,7 +228,7 @@ export { makeReducerMethods };
 
 However if you require custom shape for your state you can pass your own in as a property to the createReduxManager method
 
-```
+```js
 
 const makeReducerMethods = (reduxManager, resultsPropName) => {
   return {
@@ -282,7 +282,7 @@ export const getContentReduxManager = createReduxManager({
 
 
 You can also create a single action creator
-```
+```js
 import { makeActionCreator } from 'another-redux-manager';
 
 const inProgress = makeActionCreator('GET_CONTENT_IN_PROGRESS', 'payload');
