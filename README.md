@@ -23,6 +23,7 @@ const contentReduxManager = createReduxManager({name: 'CONTENT'});
 returns the following object:
 ```
 {
+  name:'CONTENT',
   actionTypes:{
     initial:'CONTENT_FETCH_INITIAL',
     inProgress:'CONTENT_FETCH_IN_PROGRESS',
@@ -35,7 +36,12 @@ returns the following object:
     CONTENT_FETCH_SUCCESS:'CONTENT_FETCH_SUCCESS',
     CONTENT_FETCH_FAILED:'CONTENT_FETCH_FAILED'
   },
-  name:'CONTENT',
+  actions: {
+    initial: () => {...},
+    inProgress: () => {...},
+    success: () => {...},
+    faulure: () => {...},
+  },
   reducerMethods:{
     initial: () => {...},
     inProgress: () => {...},
@@ -51,6 +57,10 @@ returns the following object:
 
 Access ActionCreators
 ```
+const { initial, inProgress, success, failure} = contentReduxManager.actions;
+
+or also available as shorthand references:
+
 const { initial, inProgress, success, failure} = contentReduxManager;
 ```
 
@@ -128,13 +138,13 @@ const INITIAL_STATE = {
 function contentReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case getContentManager.actionTypes.initial:
-        return getContentManager.reducerMethods.initial(state, action, INITIAL_STATE[getContentManager.name].results);
+        return getContentManager.reducerMethods.initial(state, INITIAL_STATE[getContentManager.name].results);
     case getContentManager.actionTypes.inProgress:
-        return getContentManager.reducerMethods.inProgress(state, action, INITIAL_STATE[getContentManager.name].results);
+        return getContentManager.reducerMethods.inProgress(state, action);
     case getContentManager.actionTypes.success:
-      return getContentManager.reducerMethods.success(state, action, INITIAL_STATE[getContentManager.name].results);
+      return getContentManager.reducerMethods.success(state, action);
     case getContentManager.actionTypes.failure:
-      return getContentManager.reducerMethods.failure(state, action, INITIAL_STATE[getContentManager.name].results);
+      return getContentManager.reducerMethods.failure(state, action);
     default:
       return state;
   }
@@ -143,21 +153,16 @@ function contentReducer(state = INITIAL_STATE, action) {
 ```
 
 
-You can also create a single action creator
-```
-import { makeActionCreator } from 'another-redux-manager';
 
-const inProgress = makeActionCreator('GET_CONTENT_IN_PROGRESS', 'payload');
-```
-
+>NOTE: The default success reducer merges the results object with the data you fetch. If you require a full replace then use the advanced reducer configuration below.-
 
 ## Advanced Usage
 
-by default the shape of each reducer method is:
+by default the shape of each reducer method looks something like:
 ```
 const makeReducerMethods = (acc, resultsPropName) => {
   return {
-    initial: (state, action, initialData) => {
+    initial: (state, initialData) => {
       return {
         ...state,
         ...{
@@ -177,7 +182,7 @@ const makeReducerMethods = (acc, resultsPropName) => {
         ...{
           [acc.name]: {
             ...{
-              [resultsPropName]: action.payload,
+              [resultsPropName]: { ...state[acc.name][resultsPropName], ...action.payload },
               status: acc.actionTypes.success,
               error: {}
             }
@@ -185,13 +190,13 @@ const makeReducerMethods = (acc, resultsPropName) => {
         }
       };
     },
-    inProgress: (state, action, initialData) => {
+    inProgress: state => {
       return {
         ...state,
         ...{
           [acc.name]: {
+            ...state[acc.name],
             ...{
-              [resultsPropName]: initialData,
               status: acc.actionTypes.inProgress,
               error: {}
             }
@@ -199,13 +204,13 @@ const makeReducerMethods = (acc, resultsPropName) => {
         }
       };
     },
-    failure: (state, action, initialData) => {
+    failure: (state, action) => {
       return {
         ...state,
         ...{
           [acc.name]: {
+            ...state[acc.name],
             ...{
-              [resultsPropName]: initialData,
               status: acc.actionTypes.failure,
               error: action.payload
             }
@@ -272,4 +277,13 @@ export const getContentReduxManager = createReduxManager({
   reducerMethods: makeReducerMethods
 });
 
+```
+
+
+
+You can also create a single action creator
+```
+import { makeActionCreator } from 'another-redux-manager';
+
+const inProgress = makeActionCreator('GET_CONTENT_IN_PROGRESS', 'payload');
 ```
