@@ -2,7 +2,7 @@
 Yes yet another attempt to reduce boilerplate for redux whilst still keeping granular control over actions and reducers.
 
 ## Why
-- Reducers boilerplate
+- Reduces boilerplate
 - No overblown middleware required
 - Less opinionated
 - plays nice with existing codebase (use as much or as little as your want)
@@ -13,6 +13,62 @@ Install
 ```js
 $ npm i another-redux-manager
 ```
+
+
+## Example
+
+```js
+
+import { createReduxManager } from 'another-redux-manager';
+
+// create a redux manager instance
+export const getContentManager = createReduxManager('GET_CONTENT');
+
+// example redux thunk which dispatches actions
+export function getContent() {
+  return dispatch => {
+    dispatch(getContentManager.inProgress());
+
+    return fetchContent()
+      .then(data => {
+        return dispatch(getContentManager.success(data));
+      })
+      .catch(error => {
+        return dispatch(getContentManager.failure(error));
+      });
+  };
+}
+
+// example reducer
+const INITIAL_STATE = {
+  [getContentManager.name]: {
+      status: getContentManager.actionTypes.initial,
+      error: null
+      results: null
+    },
+};
+
+function contentReducer(state = INITIAL_STATE, action) {
+  switch (action.type) {
+    case getContentManager.actionTypes.initial:
+        return getContentManager.reducerMethods.initial(state, INITIAL_STATE[getContentManager.name].results);
+    case getContentManager.actionTypes.inProgress:
+        return getContentManager.reducerMethods.inProgress(state, action);
+    case getContentManager.actionTypes.success:
+      return getContentManager.reducerMethods.success(state, action);
+    case getContentManager.actionTypes.failure:
+      return getContentManager.reducerMethods.failure(state, action);
+    default:
+      return state;
+  }
+}
+
+```
+
+
+
+>NOTE: The default success reducer merges the results object with the data you fetch. If you require a full replace then use the advanced reducer configuration below.-
+
 
 ## Getting Started
 
@@ -101,60 +157,6 @@ Properties:
 | reducerMethods  | function that allows customising of shape of reducer (OPTIONAL: see advanced usage) |
 
 
-
-## Example
-
-```js
-
-import { createReduxManager } from 'another-redux-manager';
-
-// create a redux manager instance
-export const getContentManager = createReduxManager('GET_CONTENT');
-
-// example redux thunk which dispatches actions
-export function getContent() {
-  return dispatch => {
-    dispatch(getContentManager.inProgress());
-
-    return fetchContent()
-      .then(data => {
-        return dispatch(getContentManager.success(data));
-      })
-      .catch(error => {
-        return dispatch(getContentManager.failure(error));
-      });
-  };
-}
-
-// example reducer
-const INITIAL_STATE = {
-  [getContentManager.name]: {
-      status: getContentManager.actionTypes.initial,
-      error: null
-      results: null
-    },
-};
-
-function contentReducer(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case getContentManager.actionTypes.initial:
-        return getContentManager.reducerMethods.initial(state, INITIAL_STATE[getContentManager.name].results);
-    case getContentManager.actionTypes.inProgress:
-        return getContentManager.reducerMethods.inProgress(state, action);
-    case getContentManager.actionTypes.success:
-      return getContentManager.reducerMethods.success(state, action);
-    case getContentManager.actionTypes.failure:
-      return getContentManager.reducerMethods.failure(state, action);
-    default:
-      return state;
-  }
-}
-
-```
-
-
-
->NOTE: The default success reducer merges the results object with the data you fetch. If you require a full replace then use the advanced reducer configuration below.-
 
 ## Advanced Usage
 
