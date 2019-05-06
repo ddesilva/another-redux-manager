@@ -48,13 +48,11 @@ const createReduxManager = ({
           { type: `${name}_${option.actionTypePostFix}` }
         );
 
-      // Short hand for easier reading when composition actions.
+      // Short hand for easier reading when composing actions.
       acc[option.actionName] = acc.actions[option.actionName];
 
       acc.name = name;
       acc.reducerMethods = reducerMethods(acc, resultsPropName);
-
-      // TODO: add actions to acc.actions and then create references on the main object.
 
       return acc;
     },

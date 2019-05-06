@@ -130,8 +130,8 @@ export function getContent() {
 const INITIAL_STATE = {
   [getContentManager.name]: {
       status: getContentManager.actionTypes.initial,
-      error: {}
-      results: {}
+      error: null
+      results: null
     },
 };
 
@@ -160,17 +160,17 @@ function contentReducer(state = INITIAL_STATE, action) {
 
 by default the shape of each reducer method looks something like:
 ```js
-const makeReducerMethods = (acc, resultsPropName) => {
+const makeReducerMethods = (reduxManager, resultsPropName) => {
   return {
     initial: (state, initialData) => {
       return {
         ...state,
         ...{
-          [acc.name]: {
+          [reduxManager.name]: {
             ...{
               [resultsPropName]: initialData,
-              status: acc.actionTypes.initial,
-              error: {}
+              status: reduxManager.actionTypes.initial,
+              error: null
             }
           }
         }
@@ -180,11 +180,11 @@ const makeReducerMethods = (acc, resultsPropName) => {
       return {
         ...state,
         ...{
-          [acc.name]: {
+          [reduxManager.name]: {
             ...{
-              [resultsPropName]: { ...state[acc.name][resultsPropName], ...action.payload },
-              status: acc.actionTypes.success,
-              error: {}
+              [resultsPropName]: { ...state[reduxManager.name][resultsPropName], ...action.payload },
+              status: reduxManager.actionTypes.success,
+              error: null
             }
           }
         }
@@ -194,11 +194,11 @@ const makeReducerMethods = (acc, resultsPropName) => {
       return {
         ...state,
         ...{
-          [acc.name]: {
-            ...state[acc.name],
+          [reduxManager.name]: {
+            ...state[reduxManager.name],
             ...{
-              status: acc.actionTypes.inProgress,
-              error: {}
+              status: reduxManager.actionTypes.inProgress,
+              error: null
             }
           }
         }
@@ -208,10 +208,10 @@ const makeReducerMethods = (acc, resultsPropName) => {
       return {
         ...state,
         ...{
-          [acc.name]: {
-            ...state[acc.name],
+          [reduxManager.name]: {
+            ...state[reduxManager.name],
             ...{
-              status: acc.actionTypes.failure,
+              status: reduxManager.actionTypes.failure,
               error: action.payload
             }
           }
@@ -239,7 +239,7 @@ const makeReducerMethods = (reduxManager, resultsPropName) => {
           [resultsPropName]: action.payload,
           [reduxManager.name]: {
             status: reduxManager.actionTypes.success,
-            error: {}
+            error: null
           }
         }
       };
@@ -251,7 +251,7 @@ const makeReducerMethods = (reduxManager, resultsPropName) => {
           [resultsPropName]: initial,
           [reduxManager.name]: {
             status: reduxManager.actionTypes.inProgress,
-            error: {}
+            error: null
           }
         }
       };

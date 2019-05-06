@@ -75,7 +75,7 @@ describe('Generate Reducers', () => {
           results: {
             key1: 'value1'
           },
-          error: {},
+          error: null,
           status: contentReduxManager.actionTypes.initial
         }
       });
@@ -99,7 +99,7 @@ describe('Generate Reducers', () => {
       expect(result).to.deep.equal({
         [contentReduxManager.name]: {
           results: { key1: 'value1', key2: 'value2' },
-          error: {},
+          error: null,
           status: contentReduxManager.actionTypes.success
         }
       });
@@ -113,7 +113,7 @@ describe('Generate Reducers', () => {
       expect(result).to.deep.equal({
         [contentReduxManager.name]: {
           results: {},
-          error: {},
+          error: null,
           status: contentReduxManager.actionTypes.inProgress
         }
       });
@@ -146,7 +146,7 @@ describe('Generate Reducers', () => {
               ...{
                 [resultsPropName]: action.payload,
                 status: reduxManager.actionTypes.success,
-                error: {}
+                error: null
               }
             };
           }
@@ -167,7 +167,7 @@ describe('Generate Reducers', () => {
       const result = reducerMethod(INITIAL_STATE, action, {});
       expect(result).to.deep.equal({
         results: payload,
-        error: {},
+        error: null,
         status: contentReduxManager.actionTypes.success
       });
     });

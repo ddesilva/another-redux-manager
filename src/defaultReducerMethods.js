@@ -8,7 +8,7 @@ const makeReducerMethods = (acc, resultsPropName) => {
             ...{
               [resultsPropName]: initialData,
               status: acc.actionTypes.initial,
-              error: {}
+              error: null
             }
           }
         }
@@ -22,7 +22,7 @@ const makeReducerMethods = (acc, resultsPropName) => {
             ...{
               [resultsPropName]: { ...state[acc.name][resultsPropName], ...action.payload },
               status: acc.actionTypes.success,
-              error: {}
+              error: null
             }
           }
         }
@@ -36,7 +36,7 @@ const makeReducerMethods = (acc, resultsPropName) => {
             ...state[acc.name],
             ...{
               status: acc.actionTypes.inProgress,
-              error: {}
+              error: null
             }
           }
         }
