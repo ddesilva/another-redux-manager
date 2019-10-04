@@ -8,12 +8,13 @@ Yes yet another attempt to reduce boilerplate for redux whilst still keeping gra
 - plays nice with existing codebase (use as much or as little as your want)
 - More control over shape of your store and reducers
 
+Dependencies
+- axios
 
-Install
+## Install
 ```js
-$ npm i another-redux-manager
+$ npm i another-redux-manager axios
 ```
-
 
 ## Example
 
@@ -29,7 +30,7 @@ export function getContent() {
   return dispatch => {
     dispatch(getContentManager.inProgress());
 
-    return fetchContent()
+    return createReduxManager.fetch({query: '/some-endpoint'})
       .then(data => {
         return dispatch(getContentManager.success(data));
       })
@@ -143,6 +144,7 @@ console.log(actions.inProgress({payload: 'test', anotherProp: 'test' }));
 
 ## Usage
 
+Create a redux helper
 ```js
 const contentReduxManager = createReduxManager({name: 'CONTENT', argNames: ['payload'], resultsPropsName: 'results', reducerMethods: () => {} });
 ```
@@ -156,6 +158,17 @@ Properties:
 | resultsPropsName  | name of property in the reducer to place fetched data (OPTIONAL: defaults to \['results'\]) |
 | reducerMethods  | function that allows customising of shape of reducer (OPTIONAL: see advanced usage) |
 
+Call async http endpoint (axios)
+```js
+const result = await createReduxManager.fetch({query: '/some-endpoint'});
+```
+
+| prop | desc  |
+|---|---|
+| type  | 'POST', 'DELETE', 'PUT', 'PATCH' .. defaults to 'GET' |
+| logger  | your choice of logging util. Must implement logger.error() method. Defaults to console.error  |
+| config  | axios config for post params, headers etc.. |
+| name  | used when logging errors. outputs 'Fetch <name> Failed |
 
 
 ## Advanced Usage
