@@ -1,7 +1,22 @@
 import { makeActionCreator, createReduxManager } from './index';
 import { expect } from 'chai';
+import sinon from 'sinon';
+import axios from 'axios';
+import { fetchTypes } from './constants';
 
 describe('createReduxManager', () => {
+  const sandbox = sinon.createSandbox();
+
+  after(() => {
+    sandbox.reset();
+    sandbox.restore();
+  });
+
+  afterEach(() => {
+    sandbox.reset();
+    sandbox.restore();
+  });
+
   const contentReduxManager = createReduxManager({
     name: 'CONTENT',
     resultsPropName: 'results',
@@ -47,6 +62,111 @@ describe('createReduxManager', () => {
       });
 
       expect(name).to.equal('CONTENT');
+    });
+  });
+
+  describe('fetch', () => {
+    describe('when minimum required params are not provided', () => {
+      it('should reject the promise with message', () => {
+        contentReduxManager.fetch().catch(err => {
+          return expect(err).to.equal('Missing Config Parameters For Fetch');
+        });
+      });
+    });
+
+    describe('when the minimum params are provided', () => {
+      describe('when required params are not provided', () => {
+        it('should make an axios GET call', async () => {
+          const expected = { data: { some: 'data' } };
+          const axiosStub = sandbox.stub().resolves(Promise.resolve({ data: expected }));
+          sandbox.stub(axios, 'get').callsFake(axiosStub);
+
+          await contentReduxManager.fetch({ query: '/some-endpoint' });
+          sinon.assert.calledWith(axiosStub, '/some-endpoint');
+        });
+
+        it('should return the data', async () => {
+          const expected = { data: { some: 'data' } };
+          const axiosStub = sandbox.stub().resolves(Promise.resolve({ data: expected }));
+          sandbox.stub(axios, 'get').callsFake(axiosStub);
+
+          const result = await contentReduxManager.fetch({ query: '/some-endpoint' });
+          expect(result).to.deep.equal(expected);
+        });
+      });
+    });
+
+    describe('when config is provided', () => {
+      it('should make an axios GET call with config', async () => {
+        const expected = { data: { some: 'data' } };
+        const axiosStub = sandbox.stub().resolves(Promise.resolve({ data: expected }));
+        sandbox.stub(axios, 'get').callsFake(axiosStub);
+
+        await contentReduxManager.fetch({
+          query: '/some-endpoint',
+          config: { params: { some: 'param' } }
+        });
+        sinon.assert.calledWith(axiosStub, '/some-endpoint', { params: { some: 'param' } });
+      });
+    });
+
+    describe('when the custom type is set', () => {
+      it('should make an axios POST call with config', async () => {
+        const expected = { data: { some: 'data' } };
+        const axiosStub = sandbox.stub().resolves(Promise.resolve({ data: expected }));
+        sandbox.stub(axios, 'post').callsFake(axiosStub);
+
+        await contentReduxManager.fetch({
+          query: '/some-endpoint',
+          type: fetchTypes.POST
+        });
+        sinon.assert.calledWith(axiosStub, '/some-endpoint');
+      });
+    });
+
+    describe('when the logger property is set and there is an error', () => {
+      it('should call logger.error with an error message', async () => {
+        const axiosStub = sandbox.stub().resolves(Promise.reject('some-reason'));
+        sandbox.stub(axios, 'get').callsFake(axiosStub);
+
+        const customLogger = {
+          error: sinon.stub()
+        };
+
+        await contentReduxManager
+          .fetch({
+            query: '/some-endpoint',
+            logger: customLogger
+          })
+          .catch(() => {
+            sinon.assert.calledWith(customLogger.error, { err: 'some-reason' }, 'Fetch Failed');
+          });
+      });
+    });
+
+    describe('when the name property is set and there is an error', () => {
+      it('should call logger.error with an error message that includes the name property', async () => {
+        const axiosStub = sandbox.stub().resolves(Promise.reject('some-reason'));
+        sandbox.stub(axios, 'get').callsFake(axiosStub);
+
+        const customLogger = {
+          error: sinon.stub()
+        };
+
+        await contentReduxManager
+          .fetch({
+            query: '/some-endpoint',
+            logger: customLogger,
+            name: 'Content'
+          })
+          .catch(() => {
+            sinon.assert.calledWith(
+              customLogger.error,
+              { err: 'some-reason' },
+              'Fetch Content Failed'
+            );
+          });
+      });
     });
   });
 });

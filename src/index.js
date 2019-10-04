@@ -1,4 +1,6 @@
 import { makeReducerMethods } from './defaultReducerMethods';
+import axios from 'axios';
+import { fetchTypes } from './constants';
 
 const OPTIONS_LIST = [
   { actionName: 'initial', actionTypePostFix: 'FETCH_INITIAL' },
@@ -22,6 +24,49 @@ const OPTIONS_LIST = [
 
 const DEFAULT_RESULTS_PROP_NAME = 'results';
 
+const defaultLogger = () => {
+  return {
+    error: (error, message) => {
+      // eslint-disable-next-line no-console
+      console.error(message);
+    }
+  };
+};
+
+/*
+  Reducers boiler plate by providing a configurable axios fetch call.
+ */
+const fetch = props => {
+  if (!props || (props && !props.query)) {
+    return Promise.reject('Missing Config Parameters For Fetch');
+  }
+
+  const { query, name, logger = defaultLogger(), logData, config = {}, type = 'GET' } = props;
+
+  const axiosCall =
+    type == fetchTypes.POST
+      ? axios.post
+      : type == fetchTypes.PUT
+      ? axios.put
+      : type == fetchTypes.PATCH
+      ? axios.patch
+      : type == fetchTypes.DELETE
+      ? axios.delete
+      : axios.get;
+
+  return axiosCall(query, config)
+    .then(response => {
+      return response.data;
+    })
+    .catch(err => {
+      logger.error(
+        { err, ...(logData && { logData }) },
+        name ? `Fetch ${name} Failed` : `Fetch Failed`
+      );
+      return Promise.reject(err);
+    });
+};
+
 const createReduxManager = ({
   name,
   resultsPropName = DEFAULT_RESULTS_PROP_NAME,
@@ -30,9 +75,9 @@ const createReduxManager = ({
 }) =>
   OPTIONS_LIST.reduce(
     (acc, option) => {
-      acc.actionTypeKeys[`${name}_${option.actionTypePostFix}`] = `${name}_${
-        option.actionTypePostFix
-      }`;
+      acc.actionTypeKeys[
+        `${name}_${option.actionTypePostFix}`
+      ] = `${name}_${option.actionTypePostFix}`;
 
       acc.actionTypes[option.actionName] = name + '_' + option.actionTypePostFix;
 
@@ -53,6 +98,7 @@ const createReduxManager = ({
 
       acc.name = name;
       acc.reducerMethods = reducerMethods(acc, resultsPropName);
+      acc.fetch = fetch;
 
       return acc;
     },
