@@ -55,9 +55,10 @@
     "prettier": "^1.18.x",
     "prop-types": "15.x",
     "react": "16.x",
-    "react-dom": "16.x"
+    "react-dom": "16.x",
+    "sinon": "^7.5.0"
   },
   "dependencies": {
-    "sinon": "^7.5.0"
+    "axios": "^0.19.0"
   }
 }
