@@ -30,7 +30,7 @@ export function getContent() {
   return dispatch => {
     dispatch(getContentManager.inProgress());
 
-    return createReduxManager.fetch({query: '/some-endpoint'})
+    return getContentManager.fetch({query: '/some-endpoint'})
       .then(data => {
         return dispatch(getContentManager.success(data));
       })
@@ -160,7 +160,7 @@ Properties:
 
 Call async http endpoint (axios)
 ```js
-const result = await createReduxManager.fetch({query: '/some-endpoint'});
+const result = await contentReduxManager.fetch({query: '/some-endpoint'});
 ```
 
 | prop | desc  |
