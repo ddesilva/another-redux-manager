@@ -1,8 +1,8 @@
 const fetchTypes = {
-  POST: 'POST',
-  PUT: 'PUT',
-  PATCH: 'PATCH',
-  DELETE: 'DELETE'
+  POST: 'post',
+  PUT: 'get',
+  PATCH: 'patch',
+  DELETE: 'delete'
 };
 
 export { fetchTypes };

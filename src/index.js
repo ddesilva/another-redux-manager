@@ -37,24 +37,21 @@ const defaultLogger = () => {
   Reducers boiler plate by providing a configurable axios fetch call.
  */
 const fetch = props => {
-  if (!props || (props && !props.query)) {
+  if (!props || (props && !props.url)) {
     return Promise.reject('Missing Config Parameters For Fetch');
   }
 
-  const { query, name, logger = defaultLogger(), logData, config = {}, type = 'GET' } = props;
+  const {
+    method = fetchTypes.get,
+    url,
+    data = {},
+    name,
+    logger = defaultLogger(),
+    logData,
+    responseType = 'json'
+  } = props;
 
-  const axiosCall =
-    type == fetchTypes.POST
-      ? axios.post
-      : type == fetchTypes.PUT
-      ? axios.put
-      : type == fetchTypes.PATCH
-      ? axios.patch
-      : type == fetchTypes.DELETE
-      ? axios.delete
-      : axios.get;
-
-  return axiosCall(query, config)
+  return axios({ method, url, data, responseType })
     .then(response => {
       return response.data;
     })

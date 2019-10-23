@@ -1,20 +1,26 @@
 import { makeActionCreator, createReduxManager } from './index';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import axios from 'axios';
 import { fetchTypes } from './constants';
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 
 describe('createReduxManager', () => {
   const sandbox = sinon.createSandbox();
+  const mock = new MockAdapter(axios);
+
+  before(() => {});
 
   after(() => {
     sandbox.reset();
     sandbox.restore();
+    mock.restore();
   });
 
   afterEach(() => {
     sandbox.reset();
     sandbox.restore();
+    mock.reset();
   });
 
   const contentReduxManager = createReduxManager({
@@ -76,58 +82,52 @@ describe('createReduxManager', () => {
 
     describe('when the minimum params are provided', () => {
       describe('when required params are not provided', () => {
-        it('should make an axios GET call', async () => {
-          const expected = { data: { some: 'data' } };
-          const axiosStub = sandbox.stub().resolves(Promise.resolve({ data: expected }));
-          sandbox.stub(axios, 'get').callsFake(axiosStub);
+        it('should make an axios GET call and get the data', async () => {
+          const expected = { some: 'data' };
 
-          await contentReduxManager.fetch({ query: '/some-endpoint' });
-          sinon.assert.calledWith(axiosStub, '/some-endpoint');
-        });
+          mock.onGet('/some-endpoint').reply(200, expected);
+          const result = await contentReduxManager.fetch({ url: '/some-endpoint' });
 
-        it('should return the data', async () => {
-          const expected = { data: { some: 'data' } };
-          const axiosStub = sandbox.stub().resolves(Promise.resolve({ data: expected }));
-          sandbox.stub(axios, 'get').callsFake(axiosStub);
-
-          const result = await contentReduxManager.fetch({ query: '/some-endpoint' });
+          expect(mock.history.get[0].url).to.equal('/some-endpoint');
           expect(result).to.deep.equal(expected);
         });
       });
     });
 
-    describe('when config is provided', () => {
-      it('should make an axios GET call with config', async () => {
-        const expected = { data: { some: 'data' } };
-        const axiosStub = sandbox.stub().resolves(Promise.resolve({ data: expected }));
-        sandbox.stub(axios, 'get').callsFake(axiosStub);
+    describe('when data is provided', () => {
+      it('should make an axios GET call with data', async () => {
+        const expected = { some: 'data' };
+        mock.onGet('/some-endpoint').reply(200, expected);
 
         await contentReduxManager.fetch({
-          query: '/some-endpoint',
-          config: { params: { some: 'param' } }
+          url: '/some-endpoint',
+          data: { params: { some: 'param' } }
         });
-        sinon.assert.calledWith(axiosStub, '/some-endpoint', { params: { some: 'param' } });
+
+        expect(mock.history.get[0].url).to.equal('/some-endpoint');
+        expect(mock.history.get[0].data).to.equal('{"params":{"some":"param"}}');
       });
     });
 
     describe('when the custom type is set', () => {
-      it('should make an axios POST call with config', async () => {
+      it('should make an axios POST call with data', async () => {
         const expected = { data: { some: 'data' } };
-        const axiosStub = sandbox.stub().resolves(Promise.resolve({ data: expected }));
-        sandbox.stub(axios, 'post').callsFake(axiosStub);
+        mock.onPost('/some-endpoint').reply(200, expected);
 
         await contentReduxManager.fetch({
-          query: '/some-endpoint',
-          type: fetchTypes.POST
+          url: '/some-endpoint',
+          method: fetchTypes.POST,
+          data: { params: { some: 'param' } }
         });
-        sinon.assert.calledWith(axiosStub, '/some-endpoint');
+        expect(mock.history.post[0].url).to.equal('/some-endpoint');
+        expect(mock.history.post[0].data).to.equal('{"params":{"some":"param"}}');
       });
     });
 
     describe('when the logger property is set and there is an error', () => {
       it('should call logger.error with an error message', async () => {
-        const axiosStub = sandbox.stub().resolves(Promise.reject('some-reason'));
-        sandbox.stub(axios, 'get').callsFake(axiosStub);
+        const expected = { some: 'data' };
+        mock.onGet('/some-endpoint').reply(200, expected);
 
         const customLogger = {
           error: sinon.stub()
@@ -135,7 +135,7 @@ describe('createReduxManager', () => {
 
         await contentReduxManager
           .fetch({
-            query: '/some-endpoint',
+            url: '/some-endpoint',
             logger: customLogger
           })
           .catch(() => {
@@ -146,8 +146,8 @@ describe('createReduxManager', () => {
 
     describe('when the name property is set and there is an error', () => {
       it('should call logger.error with an error message that includes the name property', async () => {
-        const axiosStub = sandbox.stub().resolves(Promise.reject('some-reason'));
-        sandbox.stub(axios, 'get').callsFake(axiosStub);
+        const expected = { some: 'data' };
+        mock.onGet('/some-endpoint').reply(200, expected);
 
         const customLogger = {
           error: sinon.stub()
@@ -155,7 +155,7 @@ describe('createReduxManager', () => {
 
         await contentReduxManager
           .fetch({
-            query: '/some-endpoint',
+            url: '/some-endpoint',
             logger: customLogger,
             name: 'Content'
           })

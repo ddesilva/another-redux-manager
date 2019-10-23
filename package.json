@@ -8,8 +8,8 @@
   },
   "scripts": {
     "build": "babel ./src --out-dir ./dist --copy-files",
-    "test": "mocha --inspect=0.0.0.0:6001 --opts ./mocha.opts",
-    "test:watch": "mocha --inspect=0.0.0.0:6002 --watch --opts ./mocha.opts",
+    "test": "mocha --inspect=0.0.0.0:6007 --opts ./mocha.opts",
+    "test:watch": "mocha --inspect=0.0.0.0:6007 --watch --opts ./mocha.opts",
     "clean": "rm -rf ./dist",
     "lint": "eslint ./src",
     "prepare": "npm run build"
@@ -52,6 +52,7 @@
     "eslint-plugin-prettier": "^3.1.x",
     "eslint-plugin-react": "^7.15.x",
     "mocha": "^6.2.1",
+    "moxios": "^0.4.0",
     "prettier": "^1.18.x",
     "prop-types": "15.x",
     "react": "16.x",
@@ -59,6 +60,7 @@
     "sinon": "^7.5.0"
   },
   "dependencies": {
-    "axios": "^0.19.0"
+    "axios": "^0.19.0",
+    "axios-mock-adapter": "^1.17.0"
   }
 }
