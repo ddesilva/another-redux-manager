@@ -30,7 +30,7 @@ export function getContent() {
   return dispatch => {
     dispatch(getContentManager.inProgress());
 
-    return getContentManager.fetch({query: '/some-endpoint'})
+    return getContentManager.fetch({url: '/some-endpoint'})
       .then(data => {
         return dispatch(getContentManager.success(data));
       })
